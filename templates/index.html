@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gerador de Escalas</title>
+  <title>Gere sua Escala</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
@@ -16,23 +16,29 @@
     .btn-remove:hover { background-color: #dc2626; }
   </style>
 </head>
-<body class="min-h-screen p-6">
-  <div class="max-w-4xl mx-auto bg-white text-black rounded-xl shadow-lg p-6">
-    
-    <div class="text-center mb-2">
+<body class="min-h-screen p-4">
+  <div class="max-w-3xl mx-auto bg-white text-black rounded-xl shadow-lg p-4 sm:p-6">
+    <div class="text-center mb-4">
       <img src="/static/logo.png" alt="Logo" class="mx-auto h-16 w-auto object-contain">
     </div>
-    <h1 class="text-3xl font-bold text-center text-orange-500 mb-6">Gere sua Escala</h1>
-    
+    <h1 class="text-2xl sm:text-3xl font-bold text-center text-orange-500 mb-4">Gere sua Escala</h1>
     <form method="POST">
-      <div class="mb-4">
+      <div class="mb-3">
         <label class="block text-sm font-semibold mb-1">Departamento</label>
         <input type="text" name="departamento" class="w-full border rounded px-3 py-2" required>
       </div>
 
-      <div class="mb-4">
+      <div class="mb-3">
         <label class="block text-sm font-semibold mb-1">Mês e Ano</label>
         <input type="text" name="mes_ano" placeholder="Ex: Junho/2025" class="w-full border rounded px-3 py-2" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="block text-sm font-semibold mb-1">Formato da Escala</label>
+        <select name="formato" class="w-full border rounded px-3 py-2" required>
+          <option value="imagem">Imagem</option>
+          <option value="pdf">PDF</option>
+        </select>
       </div>
 
       <div class="mb-4">
@@ -48,10 +54,15 @@
       <div class="mb-4">
         <label class="block text-sm font-semibold mb-1">Datas</label>
         <input type="text" id="datas" class="w-full border rounded px-3 py-2" placeholder="Selecione as datas" readonly>
-        <input type="hidden" name="data" id="datas-hidden">
+        <input type="hidden" name="datasSelecionadas" id="datas-hidden">
       </div>
 
-      <div class="mb-4">
+      <div class="mb-4" id="voluntarios-por-data" style="display: none;">
+        <h2 class="font-bold text-lg mb-2 text-orange-500">Voluntários por Data</h2>
+        <div id="voluntarios-container" class="space-y-4"></div>
+      </div>
+
+      <div class="mb-3">
         <label class="block text-sm font-semibold mb-1">Rodapé</label>
         <textarea name="rodape" rows="3" class="w-full border rounded px-3 py-2"></textarea>
       </div>
@@ -74,20 +85,41 @@
 
     const datasInput = document.getElementById('datas');
     const datasHidden = document.getElementById('datas-hidden');
+    const containerVoluntarios = document.getElementById('voluntarios-container');
+    const blocoVoluntarios = document.getElementById('voluntarios-por-data');
 
     flatpickr(datasInput, {
       mode: "multiple",
       dateFormat: "d/m",
       locale: "pt",
-      onChange: function(selectedDates, dateStr, instance) {
-        datasHidden.value = selectedDates.map(d => {
+      onChange: function(selectedDates) {
+        const datas = selectedDates.map(d => {
           const day = String(d.getDate()).padStart(2, '0');
           const month = String(d.getMonth() + 1).padStart(2, '0');
           return `${day}/${month}`;
-        }).join(',');
+        });
+        datasHidden.value = datas.join(',');
+
+        // Mostrar campos para voluntários por data
+        containerVoluntarios.innerHTML = "";
+        blocoVoluntarios.style.display = "block";
+        datas.forEach(data => {
+          const group = document.createElement("div");
+          group.className = "bg-gray-100 rounded p-3";
+          group.innerHTML = `<strong class="text-black block mb-2">${data}</strong>`;
+
+          for (let i = 0; i < 3; i++) {
+            const input = document.createElement("input");
+            input.type = "text";
+            input.name = `voluntarios_${data}[]`;
+            input.placeholder = "Nome do voluntário";
+            input.className = "w-full border rounded px-3 py-2 mb-2";
+            group.appendChild(input);
+          }
+          containerVoluntarios.appendChild(group);
+        });
       }
     });
   </script>
 </body>
 </html>
-
