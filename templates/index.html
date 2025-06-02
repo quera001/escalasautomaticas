@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerador de Escalas</title>
+</head>
+<body>
+  <h1>Gerar Escala</h1>
+  <form method="POST">
+      <label>Departamento:</label><br>
+      <input type="text" name="departamento" required><br>
+
+      <label>Mês e Ano:</label><br>
+      <input type="text" name="mes_ano" placeholder="Ex: Junho/2025" required><br>
+
+      <label>Funções:</label><br>
+      <input type="text" name="funcao" required>
+      <input type="text" name="funcao" required>
+      <input type="text" name="funcao"><br>
+
+      <label>Datas:</label><br>
+      <div id="datas">
+          <input type="text" name="data" placeholder="01/06 - CEIA" required><br>
+      </div>
+      <button type="button" onclick="addData()">+ Adicionar Data</button><br><br>
+
+      <label>Rodapé:</label><br>
+      <textarea name="rodape" rows="4" cols="50"></textarea><br><br>
+
+      <button type="submit">Gerar Escala</button>
+  </form>
+
+  <script>
+      function addData() {
+          let container = document.getElementById("datas");
+          let input = document.createElement("input");
+          input.type = "text";
+          input.name = "data";
+          input.placeholder = "Data";
+          input.required = true;
+          container.appendChild(input);
+          container.appendChild(document.createElement("br"));
+      }
+  </script>
+</body>
+</html>
